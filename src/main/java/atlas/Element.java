@@ -1,5 +1,6 @@
 package atlas;
 
-public interface Element {
-    boolean isStructure();
+public abstract class Element {
+    public abstract boolean isStructure();
+    public abstract String toString();
 }

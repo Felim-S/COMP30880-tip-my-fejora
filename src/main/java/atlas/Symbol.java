@@ -1,6 +1,6 @@
 package atlas;
 
-public class Symbol implements Element {
+public class Symbol extends Element {
 
     private final String value;
 

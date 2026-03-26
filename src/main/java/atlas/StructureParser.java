@@ -7,12 +7,15 @@ public class StructureParser {
 
         Stack<Structure> stack = new Stack<>();
 
+        // Separate each token by whitespace
         String[] tokens = input
                 .replace("(", " ( ")
                 .replace(")", " ) ")
                 .trim().split("\\s+");
 
+        // The first symbol after a "(" is always considered a predicate
         boolean isPredicate = false;
+
         for (String token : tokens) {
             if (token.equals("(")) {
                 stack.push(new Structure());
