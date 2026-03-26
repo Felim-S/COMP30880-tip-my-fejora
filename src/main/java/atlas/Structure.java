@@ -15,4 +15,5 @@ public class Structure implements Element {
     public void addElement(Element element) {
         elements.add(element);
     }
+    public Predicate getHead(){ return (Predicate) elements.getFirst(); }
 }
