@@ -15,7 +15,7 @@ public class StructureAbstractor {
         Structure abstraction = new Structure();
 
         for(Element element : structure.getElements()) {
-            if(element instanceof atlas.Symbol) {
+            if(element instanceof atlas.Predicate) {
                 abstraction.addElement(new Predicate(((Predicate) element).getValue()));
             }
 
