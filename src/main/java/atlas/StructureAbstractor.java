@@ -15,29 +15,19 @@ public class StructureAbstractor {
         Structure abstraction = new Structure();
 
         for(Element element : structure.getElements()) {
-            if(element instanceof atlas.Predicate) {
+            if(element instanceof Predicate) {
                 abstraction.addElement(new Predicate(((Predicate) element).getValue()));
-            }
-
-            else if(element instanceof atlas.Symbol) {
-                String value =  ((Symbol) element).getValue();
-
+            } else if (element instanceof Structure) {
+                Structure abstractChild = abstractStructure((Structure) element, map, counter);
+                abstraction.addElement(abstractChild);
+            } else if (element instanceof Symbol) {
+                String value = ((Symbol) element).getValue();
                 if(!map.containsKey(value)) {
                     map.put(value, counter[0]++);
                 }
-
-                int number = map.get(value);
-                abstraction.addElement(new Symbol(String.valueOf(number)));
-            }
-
-            else if(element instanceof atlas.Structure) {
-                Structure child =  (Structure) element;
-                Structure abstractChild = abstractStructure(child, map, counter);
-                abstraction.addElement(abstractChild);
+                abstraction.addElement(new Symbol(String.valueOf(map.get(value))));
             }
         }
-
-
         return abstraction;
     }
 }
