@@ -41,6 +41,11 @@ public class StructureTest {
     }
 
     @Test
+    public void testToIndentedString() {
+        assertEquals("(serve priest \n" + "\t(some congregation \n" + "\t\t(that \n" + "\t\t\t(perform worship))))", structure.toIndentedString());
+    }
+
+    @Test
     public void testAbstraction() {
         Structure abstracted = StructureAbstractor.generateAbstraction(structure);
         assertEquals("(serve 0 (some 1 (that (perform 2))))", abstracted.toString());
