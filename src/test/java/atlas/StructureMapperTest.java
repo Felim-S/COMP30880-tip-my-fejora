@@ -6,8 +6,7 @@ import org.junit.Test;
 
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 public class StructureMapperTest {
 
@@ -28,5 +27,45 @@ public class StructureMapperTest {
         assertEquals("army", map.get("congregation"));
         assertEquals("leader", map.get("god"));
         assertEquals("conquest", map.get("worship"));
+    }
+
+    @Test
+    public void testIdenticalStructuresAreMappable(){
+        Structure a = StructureParser.parse("(serve *priest (some congregation (that (perform worship))))");
+        Structure b = StructureParser.parse("(serve *priest (some congregation (that (perform worship))))");
+
+        assertTrue(StructureMapper.isMappable(a, b));
+    }
+
+    @Test
+    public void testAnalogousStructuresAreMappable(){
+        Structure a = StructureParser.parse("(serve *priest (some congregation (that (perform worship))))");
+        Structure b = StructureParser.parse("(serve *soldier (some army (that (perform conquest))))");
+
+        assertTrue(StructureMapper.isMappable(a, b));
+    }
+
+    @Test
+    public void testDifferentLenghtsNotMappable(){
+        Structure a = StructureParser.parse("(serve *priest congregation)");
+        Structure b = StructureParser.parse("(serve *soldier (some army (that (perform conquest))))");
+
+        assertFalse(StructureMapper.isMappable(a, b));
+    }
+
+    @Test
+    public void testDifferentPredicatesNotMappable(){
+        Structure a = StructureParser.parse("(serve *priest congregation)");
+        Structure b = StructureParser.parse("(fight *soldier conquest)");
+
+        assertFalse(StructureMapper.isMappable(a, b));
+    }
+
+    @Test
+    public void testAsteriskRule(){
+        Structure a = StructureParser.parse("(serve *priest (some congregation (that (perform worship))))");
+        Structure b = StructureParser.parse("(serve soldier (some army (that (perform conquest))))");
+
+        assertFalse(StructureMapper.isMappable(a, b));
     }
 }
