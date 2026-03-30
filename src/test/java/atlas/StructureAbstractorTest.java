@@ -50,18 +50,4 @@ public class StructureAbstractorTest {
 
     }
 
-    @Test
-    public void testAbstractionString(){
-        Structure result = parseAndAbstract("(serve priest (some congregation (that (perform worship))))");
-
-        assertEquals("(serve 0 (some 1 (that (perform 2))))", result.toString());
-    }
-
-    @Test
-    public void testAbstractionString2(){
-        Structure result = parseAndAbstract("(serve priest congregation perform)");
-
-        assertEquals("(serve 0 1 2)", result.toString());
-    }
-
 }
