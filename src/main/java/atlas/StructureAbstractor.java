@@ -22,10 +22,21 @@ public class StructureAbstractor {
                 abstraction.addElement(abstractChild);
             } else if (element instanceof Symbol) {
                 String value = ((Symbol) element).getValue();
-                if(!map.containsKey(value)) {
-                    map.put(value, counter[0]++);
+
+
+                boolean hasAsterisk = value.startsWith("*");
+                //temporarily remove asterisk
+                String stripped = hasAsterisk ? value.substring(1) : value;
+
+                if(!map.containsKey(stripped)) {
+                    map.put(stripped, counter[0]++);
                 }
-                abstraction.addElement(new Symbol(String.valueOf(map.get(value))));
+
+
+                String number = String.valueOf(map.get(stripped));
+                //if originally had asterisk add it back
+                String result = hasAsterisk ? "*" + number : number;
+                abstraction.addElement(new Symbol(result));
             }
         }
         return abstraction;
