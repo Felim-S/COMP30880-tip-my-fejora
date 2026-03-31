@@ -50,4 +50,13 @@ public class StructureAbstractorTest {
 
     }
 
+    @Test
+    public void testAsteriskRule(){
+        Structure result = parseAndAbstract("(serve *priest (some congregation (that (perform worship))))");
+
+        assertEquals(result.toString(), "(serve *0 (some 1 (that (perform 2))))");
+
+
+    }
+
 }
