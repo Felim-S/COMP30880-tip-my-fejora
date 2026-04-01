@@ -14,7 +14,7 @@ public class StructureMapper {
 
 
     public static Map<String, String> generateMapping(Structure A, Structure B){
-        if(!isMappable(A,B)){ return null; }
+        if(!isMappable(A,B)){ throw new IllegalArgumentException("Structures are not mappable"); }
 
         Map<String, String> map = new HashMap<>();
 
@@ -27,17 +27,27 @@ public class StructureMapper {
 
             if(a.isStructure() && b.isStructure()){
                 Map<String, String> subMap = generateMapping((Structure) a, (Structure) b);
-                if(subMap == null){
-                    return  null;
-                }
                 map.putAll(subMap);
             } else if(!a.isStructure() && !b.isStructure()){
                 if(!(a instanceof Predicate) && !(b instanceof Predicate)){
                     boolean aIsTopic = a.toString().startsWith("*");
                     boolean bIsTopic = b.toString().startsWith("*");
+
                     if(aIsTopic != bIsTopic){
-                        return null;
+                        throw new IllegalArgumentException("Asterisk mismatch in structure");
                     }
+
+                    String keyA = a.toString();
+                    String keyB = b.toString();
+
+                    if(map.containsKey(keyA)){
+                        if(!map.get(keyA).equals(keyB)){
+                            throw new IllegalArgumentException("Mapping is not 1:1");
+                        }
+                    } else if(map.containsValue(keyB)){
+                        throw new IllegalArgumentException("Mapping is not 1:1");
+                    }
+
                     map.put(a.toString(), b.toString());
                 }
             }

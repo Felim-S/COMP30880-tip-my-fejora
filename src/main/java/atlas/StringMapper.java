@@ -16,15 +16,31 @@ public class StringMapper {
 
         Map<String, String> mapping = new HashMap<>();
 
+        boolean isPredicate = false;
+
         for (int  i = 0; i < tokensA.length; i++){
             String tokenA =  tokensA[i];
             String tokenB =  tokensB[i];
 
             // skips parentheses and throws error if tokens are not both parentheses
-            if (tokenA.equals("(") || tokenA.equals(")")) {
+            if (tokenA.equals("(")) {
                 if (!tokenA.equals(tokenB)) {
-                    throw new  IllegalArgumentException("Structures are mismatched");
+                    throw new IllegalArgumentException("Structures are mismatched");
                 }
+                isPredicate = true;
+                continue;
+            } else if (tokenA.equals(")")) {
+                if (!tokenA.equals(tokenB)) {
+                    throw new IllegalArgumentException("Structures are mismatched");
+                }
+                continue;
+            }
+
+            if (isPredicate) {
+                if (!tokenA.equals(tokenB)) {
+                    throw new IllegalArgumentException("Predicates do not match");
+                }
+                isPredicate = false;
                 continue;
             }
 
