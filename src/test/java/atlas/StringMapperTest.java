@@ -60,5 +60,34 @@ public class StringMapperTest {
         StringMapper.generateMapping("(serve *priest congregation)", "(serve *soldier (some army (that (perform conquest))))");
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testDifferentPredicatesThrows(){
+        StringMapper.generateMapping("(serve *priest congregation)", "(work *soldier army)");
+    }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testMismatchBracketThrows(){
+        StringMapper.generateMapping("(serve *priest (some congregation (that (perform worship))))", "(serve *soldier some army (that (perform conquest)))");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testNullInputThrows(){
+        StringMapper.generateMapping(null, "(serve *priest congregation)");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testEmptyInputThrows(){
+        StringMapper.generateMapping("", "(serve *priest congregation)");
+    }
+
+    @Test
+    public void testDeepNestedMapping(){
+        Map<String, String> mapping = StringMapper.generateMapping("(serve *priest (some congregation (that (perform (for (some god)) (some worship)))))",
+                "(serve *soldier (some army (that (perform (for (some leader)) (some conquest)))))");
+
+        assertEquals("*soldier", mapping.get("*priest"));
+        assertEquals("army", mapping.get("congregation"));
+        assertEquals("leader", mapping.get("god"));
+        assertEquals("conquest", mapping.get("worship"));
+    }
 }
