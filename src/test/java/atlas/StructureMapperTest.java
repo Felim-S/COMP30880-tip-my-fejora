@@ -1,6 +1,5 @@
 package atlas;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -27,6 +26,7 @@ public class StructureMapperTest {
         assertEquals("army", map.get("congregation"));
         assertEquals("leader", map.get("god"));
         assertEquals("conquest", map.get("worship"));
+        assertEquals(4, map.size());
     }
 
     @Test
@@ -46,7 +46,7 @@ public class StructureMapperTest {
     }
 
     @Test
-    public void testDifferentLenghtsNotMappable(){
+    public void testDifferentLengthsNotMappable(){
         Structure a = StructureParser.parse("(serve *priest congregation)");
         Structure b = StructureParser.parse("(serve *soldier (some army (that (perform conquest))))");
 
@@ -67,5 +67,25 @@ public class StructureMapperTest {
         Structure b = StructureParser.parse("(serve soldier (some army (that (perform conquest))))");
 
         assertFalse(StructureMapper.isMappable(a, b));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testAsteriskRuleGenerateMapping(){
+        B = StructureParser.parse("(serve soldier (some army (that (perform (for (some leader)) (some conquest)))))");
+        StructureMapper.generateMapping(A,B);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testIncorrectOneToOneMapping(){
+        Structure a = StructureParser.parse("(A B B)");
+        Structure b = StructureParser.parse("(A C D)");
+        StructureMapper.generateMapping(a, b);
+    }
+
+    @Test
+    public void testIdentityMapping(){
+        Map<String, String> map = StructureMapper.generateMapping(A, A);
+        assertEquals("*priest", map.get("*priest"));
+        assertEquals("congregation", map.get("congregation"));
     }
 }
