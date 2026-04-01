@@ -88,4 +88,19 @@ public class StructureMapperTest {
         assertEquals("*priest", map.get("*priest"));
         assertEquals("congregation", map.get("congregation"));
     }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testEmptyInput(){
+        A =  StructureParser.parse("");
+        B =  StructureParser.parse("");
+        StructureMapper.generateMapping(A, B);
+    }
+
+    @Test
+    public void testEmptyMapping(){
+        A =  StructureParser.parse("()");
+        B =  StructureParser.parse("()");
+        Map<String, String> map = StructureMapper.generateMapping(A, B);
+        assertEquals(0, map.size());
+    }
 }

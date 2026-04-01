@@ -2,6 +2,9 @@ package atlas;
 
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.Assert.*;
 
 public class StructureParserTest {
@@ -32,5 +35,16 @@ public class StructureParserTest {
     public void testPredicate() {
         Structure structure = StructureParser.parse("(A B (C D))");
         assertTrue(structure.getHead() instanceof atlas.Predicate);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testEmptyInput() {
+        StructureParser.parse("");
+    }
+
+    @Test
+    public void testEmptyStructure() {
+        Structure structure = StructureParser.parse("()");
+        assertEquals(0, structure.getElements().size());
     }
 }
