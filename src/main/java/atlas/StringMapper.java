@@ -6,6 +6,10 @@ import java.util.Map;
 public class StringMapper {
     public static Map<String, String> generateMapping(String A, String B){
 
+        if (A == null || A.isBlank() || B == null || B.isBlank()) {
+            throw new IllegalArgumentException("Structures are mismatched");
+        }
+
         String[] tokensA = tokenise(A);
         String[] tokensB = tokenise(B);
 

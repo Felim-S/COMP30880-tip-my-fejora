@@ -5,6 +5,10 @@ import java.util.Stack;
 public class StructureParser {
     public static Structure parse(String input){
 
+        if(input == null || input.isBlank()){
+            throw new IllegalArgumentException("Structure is empty");
+        }
+
         Stack<Structure> stack = new Stack<>();
 
         // Separate each token by whitespace
