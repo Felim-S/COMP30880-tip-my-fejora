@@ -16,9 +16,13 @@ public class StructureRewriter {
     }
 
     public List<Structure> rewrite(Structure structure) {
-        List<Structure> structures = new ArrayList<>();
+        // all variants are built by recursively rewriting sub-structures (Cartesian product)
+        List<Structure> base = new ArrayList<>();
+        base.add(structure);
 
-        structures.add(structure);
+        // - variants are built by applying rules to this structure's own predicate
+        // - they're kept separate as they are entirely new structures
+        List<Structure> predicateRewrites = new ArrayList<>();
 
         for (Element element : structure.getElements()) {
             if (!element.isStructure()){
@@ -26,17 +30,33 @@ public class StructureRewriter {
                 if (elementRules != null){
                     for (Rule rule : elementRules){
                         Structure newStructure = applyRule(structure, rule);
-                        if (newStructure != null){
-                            structures.add(newStructure);
-                        }
+                        if (newStructure != null) predicateRewrites.add(newStructure);
                     }
                 }
-            } else{
-                return rewrite((Structure) element);
+            } else {
+                // we pair each base variant with each sub structure rewrite
+                List<Structure> subRewrites = rewrite((Structure) element);
+                List<Structure> expanded = new ArrayList<>();
+                for (Structure b : base) {
+                    for (Structure sub : subRewrites) {
+                        expanded.add(replaceElement(b, element, sub));
+                    }
+                }
+                base = expanded;
             }
         }
 
-        return structures;
+        List<Structure> results = new ArrayList<>(base);
+        results.addAll(predicateRewrites);
+        return results;
+    }
+
+    private Structure replaceElement(Structure parent, Element original, Element replacement) {
+        Structure s = new Structure();
+        for (Element e : parent.getElements()) {
+            s.addElement(e == original ? replacement : e);
+        }
+        return s;
     }
 
     private Structure applyRule(Structure structure, Rule rule) {
