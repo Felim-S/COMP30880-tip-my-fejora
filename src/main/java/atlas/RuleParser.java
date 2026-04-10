@@ -7,8 +7,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 public class RuleParser {
+
+    private static final Logger logger = AtlasLogger.getLogger(RuleParser.class);
 
     public static Map<String, List<Rule>> parse(String filename) {
         Map<String, List<Rule>> ruleMap = new HashMap<>();
@@ -23,7 +26,10 @@ public class RuleParser {
 
                 // Split on tab to get predicate and its rewrite
                 String[] parts = line.split("\t");
-                if (parts.length < 2) continue;
+                if (parts.length < 2){
+                    logger.warning("Malformed rule (missing rewrite column) at line: \"" + line + "\"");
+                    continue;
+                }
 
                 String predicate = parts[0].trim();
                 String rewriteSection = parts[1].trim();
@@ -35,6 +41,8 @@ public class RuleParser {
                     Rule rule = parseRule(predicate, rewrite.trim());
                     if (rule != null) {
                         rules.add(rule);
+                    } else{
+                        logger.warning("Empty rewrite for predicate \"" + predicate + "\" skipping");
                     }
                 }
 

@@ -3,8 +3,11 @@ package atlas;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 public class StructureRewriter {
+
+    private static final Logger logger = AtlasLogger.getLogger(StructureRewriter.class);
 
     private final Map<String, List<Rule>> rules;
 
@@ -39,7 +42,10 @@ public class StructureRewriter {
     private Structure applyRule(Structure structure, Rule rule) {
         List<Element> elements = structure.getElements();
 
-        if (elements.size() < 3){ return structure; }
+        if (elements.size() < 3){
+            logger.warning("Cannot apply rule: [" + rule.toString() + "] structure has less than 3 elements");
+            return structure;
+        }
 
         Element arg1 =  elements.get(1);
         Element arg2 = elements.get(2);
