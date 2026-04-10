@@ -77,9 +77,10 @@ public class RuleParser {
         // eg "respect_as:friend&disliking" -> gerund = "disliking"
         String gerund = null;
         if (rewrite.contains("&")) {
-            String[] ampParts = rewrite.split("&");
-            rewrite = ampParts[0];
-            gerund = ampParts[1];
+            int idx = rewrite.indexOf("&");
+            gerund = rewrite.substring(idx + 1);
+            rewrite = rewrite.substring(0, idx);
+            if (gerund.isEmpty()) gerund = null;
         }
 
         //split off colon element
@@ -87,14 +88,14 @@ public class RuleParser {
         String colonElement = null;
         boolean colonElemPushed = false;
         if (rewrite.contains(":")) {
-            String[] colonParts = rewrite.split(":");
-            rewrite = colonParts[0];
-            colonElement = colonParts[1];
-            // check for * after colon element
+            int idx = rewrite.indexOf(":");
+            colonElement = rewrite.substring(idx + 1);
+            rewrite = rewrite.substring(0, idx);
             if (colonElement.endsWith("*")) {
                 colonElemPushed = true;
                 colonElement = colonElement.substring(0, colonElement.length() - 1);
             }
+            if (colonElement.isEmpty()) colonElement = null;
         }
 
         String newVerb;
