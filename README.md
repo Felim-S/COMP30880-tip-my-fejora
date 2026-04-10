@@ -1,48 +1,22 @@
 # ATLAS - Analogical Reasoning & Mapping Project
 
-This is the repository for the COMP30880 group project for the team "Tip My Fejora"
+COMP30880 group project — team "Tip My Fejora"
 
-## Running the Application
+## Prerequisites
+- Java 25
+- `rewrite rules.txt` in the project root
 
-### Prerequisites
-- Java 25 (OpenJDK)
-- IntelliJ IDEA (recommended)
-
-### Setup
-1. Clone the repository
-2. Open the project in IntelliJ IDEA
-3. Build the project: Build > Build Project
-4. Ensure `rewrite rules.txt` is in the project root
-
-### Running from IntelliJ
-In IntelliJ, open the run configuration for `atlas.Main` and set the program arguments:
-
+## Build
 ````
-"rewrite rules.txt" "(predicate *arg1 arg2)"
+mvn package
 ````
 
-For example:
+## Run
 ````
-"rewrite rules.txt" "(exercise *athlete muscle)"
-````
-
-This will print the original structure followed by all rewrites.
-
-### Running from the Command Line
-
-Ensure Java 25 is installed and on your PATH, then from the project root:
-
-**Compile:**
-````
-javac -d target/classes src/main/java/atlas/*.java
+java -jar target/COMP30880-tip-my-fejora-1.0-SNAPSHOT.jar "rewrite rules.txt" "(exercise *athlete muscle)"
 ````
 
-**Run:**
-````
-java -cp target/classes atlas.Main "rewrite rules.txt" "(exercise *athlete muscle)"
-````
-
-### Output
+## Output
 ````
 Original:
 (exercise *athlete muscle)
@@ -51,5 +25,5 @@ Rewrites (1):
 (by exercising (perform *athlete exercise (of muscle)))
 ````
 
-### Logging
-Any malformed rules encountered during parsing are logged to `atlas.log` in the project root.
+## Logging
+Malformed rules are logged to `atlas.log` in the project root.
