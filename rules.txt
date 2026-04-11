@@ -1,0 +1,8 @@
+Predicate	Abstraction
+exercise	perform_of:exercise*&exercising
+flex	display_with:effort&flexing
+dislike	!respect_as:friend&disliking
+lose_control_over	<!respect_as:leader&rejecting_control
+flunk	^reject_for:teacher&flunking
+undermine	!support_as:leader&undermining, !respect_as:leader&undermining
+disappoint	!respect_for:competence, imbue_with:disappointment
