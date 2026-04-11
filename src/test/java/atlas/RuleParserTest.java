@@ -32,7 +32,7 @@ public class RuleParserTest {
     @Test
     public void testRuleParser() {
         Map<String, List<Rule>> rules = RuleParser.parse(testFile);
-        Rule rule = rules.get("exercise").get(0);
+        Rule rule = rules.get("exercise").getFirst();
 
         assertEquals("exercise", rule.getOriginalPredicate());
         assertEquals("perform", rule.getNewVerb());
@@ -45,21 +45,21 @@ public class RuleParserTest {
     @Test
     public void negationFlagTest() {
         Map<String, List<Rule>> rules = RuleParser.parse(testFile);
-        Rule rule = rules.get("dislike").get(0);
+        Rule rule = rules.get("dislike").getFirst();
         assertTrue(rule.isNegated());
     }
 
     @Test
     public void switchArgsFlagTest() {
         Map<String, List<Rule>> rules = RuleParser.parse(testFile);
-        Rule rule = rules.get("lose_control_over").get(0);
+        Rule rule = rules.get("lose_control_over").getFirst();
         assertTrue(rule.isSwitchArgs());
     }
 
     @Test
     public void newAgentFlagTest() {
         Map<String, List<Rule>> rules = RuleParser.parse(testFile);
-        Rule rule = rules.get("flunk").get(0);
+        Rule rule = rules.get("flunk").getFirst();
         assertTrue(rule.isNewAgent());
         assertEquals("teacher", rule.getColonElement());
     }
@@ -74,7 +74,7 @@ public class RuleParserTest {
     @Test
     public void noGerundTest() {
         Map<String, List<Rule>> rules = RuleParser.parse(testFile);
-        Rule rule = rules.get("disappoint").get(0);
+        Rule rule = rules.get("disappoint").getFirst();
         assertNull(rule.getGerund());
     }
 }
