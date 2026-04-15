@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.lang.Math.pow;
+
 public class AnalogyRanker {
 
     private static final int DEFAULT_BETA = 3;
@@ -11,7 +13,10 @@ public class AnalogyRanker {
     private KnowledgeBase kb;
     private AnalogyRetriever retriever;
 
-    public AnalogyRanker(KnowledgeBase kb, AnalogyRetriever retriever) {}
+    public AnalogyRanker(KnowledgeBase kb, AnalogyRetriever retriever) {
+        this.kb = kb;
+        this.retriever = retriever;
+    }
 
     public static double richness(Structure structure) {
         Map<Integer, Integer> count = calculateCount(structure, 0);
@@ -19,7 +24,7 @@ public class AnalogyRanker {
         double sum = 0.0;
 
         for(int i = 0; i < count.size(); i++){
-            sum += (count.get(i)) * Math.pow(10, i);
+            sum += (count.get(i)) * pow(10, i);
         }
 
         return Math.log10(sum);
@@ -42,9 +47,24 @@ public class AnalogyRanker {
         return count;
     }
 
-    public double quality(String source, String target) { return 0; }
+    public static double calculateQuality(List<Structure[]> alignable, int beta) {
+        double sum = 0.0;
 
-    public double quality(String source, String target, int beta) { return 0; }
+        for (Structure[] pair : alignable) {
+            double r = richness(pair[1]);
+            sum += Math.pow(r, beta);
+        }
+
+        return sum;
+    }
+
+    public double quality(String source, String target) {
+        return calculateQuality(retriever.getAlignableStructures(source, target), DEFAULT_BETA);
+    }
+
+    public double quality(String source, String target, int beta) {
+        return calculateQuality(retriever.getAlignableStructures(source, target), beta);
+    }
 
     public List<String> rankSources(String target) { return null; }
 
