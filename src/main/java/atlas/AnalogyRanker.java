@@ -1,8 +1,7 @@
 package atlas;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.lang.Math.pow;
 
@@ -66,7 +65,18 @@ public class AnalogyRanker {
         return calculateQuality(retriever.getAlignableStructures(source, target), beta);
     }
 
-    public List<String> rankSources(String target) { return null; }
+    public List<String> rankSources(String target) {
+        return rankSources(target, DEFAULT_BETA);
+    }
 
-    public List<String> rankSources(String target, int beta) { return null; }
+    public List<String> rankSources(String target, int beta) {
+        Set<String> candidateSources = retriever.getCandidateSources(target);
+
+        return candidateSources.stream()
+                .sorted((a,b) -> Double.compare(
+                        quality(b, target, beta),
+                        quality(a, target, beta)
+                ))
+                .collect(Collectors.toList());
+    }
 }
