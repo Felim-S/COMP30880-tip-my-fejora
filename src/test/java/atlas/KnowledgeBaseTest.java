@@ -32,6 +32,8 @@ public class KnowledgeBaseTest {
         fw.write("(eat *food apple)\n");
         fw.write("(give *food *drink book)\n");
         fw.write("(help *Adam Eve)\n");
+        fw.write("(perform *priest worship)\n");
+        fw.write("(outer (inner *deep value))\n");
 
         fw.close();
     }
@@ -48,5 +50,65 @@ public class KnowledgeBaseTest {
         assertEquals(2, food.size());
         assertEquals(1, drink.size());
         assertEquals(1, Adam.size());
+    }
+
+    @Test
+    public void nestedStructureIndexing() throws Exception {
+
+        kb.loadStructure(testFile);
+
+        List<Structure> result = kb.getStructuresForTopic("deep");
+        assertEquals(1, result.size());
+    }
+
+    @Test
+    public void testHashIndexing() throws Exception {
+
+        kb.loadStructure(testFile);
+
+        Structure s = new Structure();
+        s.addElement(new Predicate("perform"));
+        s.addElement(new Symbol("*priest"));
+        s.addElement(new Symbol("worship"));
+
+        String hash = StructureAbstractor.generateAbstraction(s).toString();
+        List<Structure> result = kb.getStructuresByHash(hash);
+
+        assertFalse(result.isEmpty());
+    }
+
+    @Test
+    public void unknownTopicTest() throws Exception {
+
+        kb.loadStructure(testFile);
+
+        List<Structure> result = kb.getStructuresForTopic("unknown");
+
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void testGetTopics() throws Exception {
+
+        kb.loadStructure(testFile);
+
+        List<String> topics = kb.getTopics();
+
+        assertTrue(topics.contains("food"));
+        assertTrue(topics.contains("drink"));
+        assertTrue(topics.contains("Adam"));
+    }
+
+    @Test
+    public void emptyFileTest() throws Exception {
+
+        FileWriter fw = new FileWriter(testFile);
+
+        fw.write("");
+        fw.close();
+
+        kb.loadStructure(testFile);
+
+        assertTrue(kb.getTopics().isEmpty());
     }
 }
