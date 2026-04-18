@@ -1,14 +1,23 @@
 package atlas;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class AnalogyRankerTest {
+
+    KnowledgeBase kb;
+
+    @Before
+    public void setUp() throws Exception {
+        kb = new KnowledgeBase(new StructureRewriter(new HashMap<>()));
+    }
+
     @Test
     public void testRichnessBasic() {
         Structure s = StructureParser.parse(
@@ -138,5 +147,89 @@ public class AnalogyRankerTest {
         double q2 = AnalogyRanker.calculateQuality(poorPair, 3);
 
         assertTrue(q1 > q2);
+    }
+
+    @Test
+    public void testQualityWithAnalogyRetriever(){
+        Structure scientist = StructureParser.parse(
+                "(by working (perform *scientist (some work (for lab (that (conduct experiment))))))");
+        Structure priest = StructureParser.parse(
+                "(by serving (perform *priest (some service (for congregation (that (conduct worship))))))");
+
+        kb.addStructure(scientist);
+        kb.addStructure(priest);
+
+        AnalogyRetriever retriever = new AnalogyRetriever(kb);
+        AnalogyRanker ranker = new AnalogyRanker(retriever);
+
+        double r = AnalogyRanker.richness(priest);
+        double expected = Math.pow(r, 3);
+
+        double q = ranker.quality("scientist", "priest");
+
+        assertEquals(expected, q, 0.001);
+    }
+
+    @Test
+    public void testRankSourcesBasic() {
+        // target: soldier - two structures
+        kb.addStructure(StructureParser.parse("(serve *soldier army)"));
+        kb.addStructure(StructureParser.parse("(fight *soldier battle)"));
+
+        // priest aligns on both -> higher quality
+        kb.addStructure(StructureParser.parse("(serve *priest army)"));
+        kb.addStructure(StructureParser.parse("(fight *priest battle)"));
+
+        // teacher aligns on one only -> lower quality
+        kb.addStructure(StructureParser.parse("(serve *teacher army)"));
+
+        AnalogyRetriever retriever = new AnalogyRetriever(kb);
+        AnalogyRanker ranker = new AnalogyRanker(retriever);
+
+        List<String> ranked = ranker.rankSources("soldier");
+
+        assertEquals(2, ranked.size());
+        assertEquals("priest", ranked.get(0));
+        assertEquals("teacher", ranked.get(1));
+    }
+
+    @Test
+    public void testRankSourcesEmpty() {
+        AnalogyRetriever retriever = new AnalogyRetriever(kb);
+        AnalogyRanker ranker = new AnalogyRanker(retriever);
+
+        List<String> ranked = ranker.rankSources("soldier");
+
+        assertTrue(ranked.isEmpty());
+    }
+
+    @Test
+    public void testRankSourcesSingle() {
+
+        // soldier
+        kb.addStructure(StructureParser.parse("(serve *soldier army)"));
+
+        // priest
+        kb.addStructure(StructureParser.parse("(serve *priest congregation)"));
+
+        AnalogyRetriever retriever = new AnalogyRetriever(kb);
+        AnalogyRanker ranker = new AnalogyRanker(retriever);
+
+        List<String> ranked = ranker.rankSources("soldier");
+
+        assertEquals(1, ranked.size());
+    }
+
+    @Test
+    public void testRankSourcesExcludesTarget() {
+        kb.addStructure(StructureParser.parse("(serve *soldier army)"));
+        kb.addStructure(StructureParser.parse("(serve *priest army)"));
+
+        AnalogyRetriever retriever = new AnalogyRetriever(kb);
+        AnalogyRanker ranker = new AnalogyRanker(retriever);
+
+        List<String> ranked = ranker.rankSources("soldier");
+
+        assertFalse(ranked.contains("soldier"));
     }
 }
