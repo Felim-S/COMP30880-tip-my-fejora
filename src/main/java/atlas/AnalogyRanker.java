@@ -9,11 +9,9 @@ public class AnalogyRanker {
 
     private static final int DEFAULT_BETA = 3;
 
-    private KnowledgeBase kb;
-    private AnalogyRetriever retriever;
+    private final AnalogyRetriever retriever;
 
-    public AnalogyRanker(KnowledgeBase kb, AnalogyRetriever retriever) {
-        this.kb = kb;
+    public AnalogyRanker(AnalogyRetriever retriever) {
         this.retriever = retriever;
     }
 
@@ -22,7 +20,7 @@ public class AnalogyRanker {
 
         double sum = 0.0;
 
-        for(int i = 0; i < count.size(); i++){
+        for (int i = 0; i < count.size(); i++) {
             sum += (count.get(i)) * pow(10, i);
         }
 
