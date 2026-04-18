@@ -1,35 +1,34 @@
 package atlas;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class Main {
-    public static void main(String[] args) {
-//        if (args.length < 2) {
-//            System.err.println("Usage: atlas <rules-file> <structure>");
-//            System.exit(1);
-//        }
-//
-//        String rulesFile = args[0];
-//        String input = args[1];
-//
-//        Map<String, List<Rule>> rules = RuleParser.parse(rulesFile);
-//        Structure structure = StructureParser.parse(input);
-//        StructureRewriter rewriter = new StructureRewriter(rules);
-//
-//        List<Structure> results = rewriter.rewrite(structure);
-//
-//        System.out.println("Original:");
-//        System.out.println(structure);
-//        System.out.println("\nRewrites (" + (results.size() - 1) + "):");
-//        for (int i = 1; i < results.size(); i++) {
-//            System.out.println(results.get(i));
-//        }
-        Structure structure = StructureParser.parse("(by working (perform scientist (some work (for lab (that (conduct experiment))))))");
-        structure = StructureParser.parse("(work_in scientist (some laboratory (that (conduct experiment))))");
-        System.out.println("Structure: " + structure);
-        double richness = AnalogyRanker.richness(structure);
-        System.out.println("Richness: " + richness);
+    public static void main(String[] args) throws Exception {
+        String filename = "structured domains.txt";
+        String target = args.length > 0 ? args[0] : "AIDS";
 
+        KnowledgeBase kb = new KnowledgeBase(new StructureRewriter(new HashMap<>()));
+        kb.loadStructure(filename);
+
+        System.out.println("Loaded structures across " + kb.getTopics().size() + " topics.\n");
+
+        List<Structure> structures = kb.getStructuresForTopic(target);
+        System.out.println("Structures about '" + target + "': " + structures.size());
+        structures.stream().limit(3).forEach(s -> System.out.println("  " + s));
+
+        AnalogyRetriever retriever = new AnalogyRetriever(kb);
+        AnalogyRanker ranker = new AnalogyRanker(retriever);
+
+        List<String> ranked = ranker.rankSources(target);
+        System.out.println("\nRanked analogies for '" + target + "' (" + ranked.size() + " total):");
+        ranked.stream().limit(10).forEach(source ->
+                System.out.printf("  %-20s quality = %.4f%n", source, ranker.quality(source, target))
+        );
     }
 }
