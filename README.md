@@ -13,8 +13,9 @@ mvn package
 
 ## Run
 ````
-java -jar target/COMP30880-tip-my-fejora-1.0-SNAPSHOT.jar [target]
+java -Xmx8g -jar target/COMP30880-tip-my-fejora-1.0-SNAPSHOT.jar [target]
 ````
+> `-Xmx8g` is required — the knowledge base file is ~430MB and exceeds the default JVM heap.
 
 `target` overrides the topic in `config.properties` (default: `apple`).
 

@@ -60,18 +60,10 @@ public class KnowledgeBase {
      */
 
     public void addStructure(Structure structure) {
-
-        // index by topic
         indexByTopic(structure, structure);
 
-        // index by hash
-        String hash = StructureAbstractor
-                .generateAbstraction(structure)
-                .toString()
-                .intern();
-
-        List<Structure> hashList = hashIndex.computeIfAbsent(hash, k -> new ArrayList<>());
-        if(!hashList.contains(structure)) hashList.add(structure);
+        String hash = StructureAbstractor.generateAbstraction(structure).toString().intern();
+        hashIndex.computeIfAbsent(hash, k -> new ArrayList<>()).add(structure);
     }
 
     // recursive method for indexing structures by topic
@@ -85,7 +77,7 @@ public class KnowledgeBase {
                     String topicName = value.substring(1).intern();
 
                     List<Structure> topicList = topicIndex.computeIfAbsent(topicName, k -> new ArrayList<>());
-                    if (!topicList.contains(root)) topicList.add(root);
+                    topicList.add(root);
                 }
 
             } else if (element instanceof Structure s) {
