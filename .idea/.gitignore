@@ -6,7 +6,3 @@
 # Datasource local storage ignored files
 /dataSources/
 /dataSources.local.xml
-# Log Files
-*.log
-# Rules Files
-/structured domains.txt

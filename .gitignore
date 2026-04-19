@@ -37,7 +37,3 @@ build/
 
 ### Mac OS ###
 .DS_Store
-
-### Log Files ###
-*.log
-/structured domains.txt
