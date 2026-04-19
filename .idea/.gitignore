@@ -8,3 +8,5 @@
 /dataSources.local.xml
 # Log Files
 *.log
+# Rules Files
+structured domains.txt
