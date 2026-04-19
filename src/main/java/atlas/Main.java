@@ -11,16 +11,16 @@ import java.util.Map;
 public class Main {
     public static void main(String[] args) throws Exception {
         String filename = "structured domains.txt";
-        String target = args.length > 0 ? args[0] : "AIDS";
+        String target = args.length > 0 ? args[0] : "apple";
 
-        KnowledgeBase kb = new KnowledgeBase(new StructureRewriter(new HashMap<>()));
+        KnowledgeBase kb = new KnowledgeBase(new StructureRewriter(RuleParser.parse("rewrite rules.txt")));
         kb.loadStructure(filename);
 
         System.out.println("Loaded structures across " + kb.getTopics().size() + " topics.\n");
 
         List<Structure> structures = kb.getStructuresForTopic(target);
         System.out.println("Structures about '" + target + "': " + structures.size());
-        structures.stream().limit(3).forEach(s -> System.out.println("  " + s));
+        structures.forEach(s -> System.out.println("  " + s));
 
         AnalogyRetriever retriever = new AnalogyRetriever(kb);
         AnalogyRanker ranker = new AnalogyRanker(retriever);

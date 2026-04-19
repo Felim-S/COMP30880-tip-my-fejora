@@ -29,11 +29,11 @@ public class KnowledgeBaseTest {
         testFile = "kb_test.txt";
         FileWriter fw = new FileWriter(testFile);
 
-        fw.write("(eat *food apple)\n");
-        fw.write("(give *food *drink book)\n");
-        fw.write("(help *Adam Eve)\n");
-        fw.write("(perform *priest worship)\n");
-        fw.write("(outer (inner *deep value))\n");
+        fw.write("food\t(eat *food apple)\t(eat * 0)\t1\n");
+        fw.write("food\t(give *food *drink book)\t(give * 0 1)\t2\n");
+        fw.write("adam\t(help *Adam Eve)\t(help * 0)\t3\n");
+        fw.write("priest\t(perform *priest worship)\t(perform * 0)\t4\n");
+        fw.write("deep\t(outer (inner *deep value))\t(outer (inner * 0))\t5\n");
 
         fw.close();
     }

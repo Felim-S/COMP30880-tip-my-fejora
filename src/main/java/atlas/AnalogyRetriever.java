@@ -6,7 +6,7 @@ import java.util.Set;
 
 public class AnalogyRetriever {
 
-    private KnowledgeBase kb;
+    private final KnowledgeBase kb;
 
     public AnalogyRetriever(KnowledgeBase kb) {
         this.kb = kb;
