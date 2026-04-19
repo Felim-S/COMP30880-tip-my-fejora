@@ -34,15 +34,22 @@ public class KnowledgeBase {
                 line = line.trim();
                 if (line.isEmpty()) continue;
 
-                try {
-                    Structure structure = StructureParser.parse(line);
-                    List<Structure> variants = rewriter.rewrite(structure);
-                    for (Structure variant : variants) {
-                        addStructure(variant);
-                    }
+                //split each line by tabs
+                String[] structures = line.split("\t");
+                for(String structureString: structures) {
+                    structureString = structureString.trim();
+                    if (structureString.isEmpty()) continue;
 
-                } catch (Exception e) {
-                    logger.warning("Failed to parse structure at line " + line + ": " + e.getMessage());
+                    try {
+                        Structure structure = StructureParser.parse(structureString);
+                        List<Structure> variants = rewriter.rewrite(structure);
+                        for (Structure variant : variants) {
+                            addStructure(variant);
+                        }
+
+                    } catch (Exception e) {
+                        logger.warning("Failed to parse structure at line " + line + ": " + e.getMessage());
+                    }
                 }
             }
         }
