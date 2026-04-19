@@ -9,4 +9,4 @@
 # Log Files
 *.log
 # Rules Files
-structured domains.txt
+/structured domains.txt

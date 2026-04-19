@@ -40,3 +40,4 @@ build/
 
 ### Log Files ###
 *.log
+/structured domains.txt
