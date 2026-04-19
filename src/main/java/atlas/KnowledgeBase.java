@@ -43,10 +43,7 @@ public class KnowledgeBase {
 
                     try {
                         Structure structure = StructureParser.parse(structureString);
-                        List<Structure> variants = rewriter.rewrite(structure);
-                        for (Structure variant : variants) {
-                            addStructure(variant);
-                        }
+                        addStructure(structure);
                     } catch (Exception e) {
                         logger.warning("Failed to parse structure: " + structureString + ": " + e.getMessage());
                     }
