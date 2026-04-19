@@ -13,7 +13,7 @@ public class Main {
 
         String filename = config.getProperty("kb.file", "structured domains.txt");
         String rulesFile = config.getProperty("rules.file", "rewrite rules.txt");
-        String target = args.length > 0 ? args[0] : config.getProperty("target", "apple");
+        String target = args.length > 0 ? args[0] : config.getProperty("target", "Valhalla");
         int beta = Integer.parseInt(config.getProperty("beta", "3"));
         int limit = Integer.parseInt(config.getProperty("results.limit", "10"));
 
