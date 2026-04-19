@@ -1,19 +1,23 @@
 package atlas;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.HashMap;
+import java.io.*;
 import java.util.List;
-import java.util.Map;
+import java.util.Properties;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        String filename = "structured domains.txt";
-        String target = args.length > 0 ? args[0] : "apple";
+        Properties config = new Properties();
+        try (InputStream in = new FileInputStream("config.properties")) {
+            config.load(in);
+        }
 
-        KnowledgeBase kb = new KnowledgeBase(new StructureRewriter(RuleParser.parse("rewrite rules.txt")));
+        String filename = config.getProperty("kb.file", "structured domains.txt");
+        String rulesFile = config.getProperty("rules.file", "rewrite rules.txt");
+        String target = args.length > 0 ? args[0] : config.getProperty("target", "apple");
+        int beta = Integer.parseInt(config.getProperty("beta", "3"));
+        int limit = Integer.parseInt(config.getProperty("results.limit", "10"));
+
+        KnowledgeBase kb = new KnowledgeBase(new StructureRewriter(RuleParser.parse(rulesFile)));
         kb.loadStructure(filename);
 
         System.out.println("Loaded structures across " + kb.getTopics().size() + " topics.\n");
@@ -25,10 +29,10 @@ public class Main {
         AnalogyRetriever retriever = new AnalogyRetriever(kb);
         AnalogyRanker ranker = new AnalogyRanker(retriever);
 
-        List<String> ranked = ranker.rankSources(target);
+        List<String> ranked = ranker.rankSources(target, beta);
         System.out.println("\nRanked analogies for '" + target + "' (" + ranked.size() + " total):");
-        ranked.stream().limit(10).forEach(source ->
-                System.out.printf("  %-20s quality = %.4f%n", source, ranker.quality(source, target))
+        ranked.stream().limit(limit).forEach(source ->
+                System.out.printf("  %-20s quality = %.4f%n", source, ranker.quality(source, target, beta))
         );
     }
 }

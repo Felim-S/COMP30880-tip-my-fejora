@@ -1,0 +1,5 @@
+food	(eat *food apple)	(eat * 0)	1
+food	(give *food *drink book)	(give * 0 1)	2
+adam	(help *Adam Eve)	(help * 0)	3
+priest	(perform *priest worship)	(perform * 0)	4
+deep	(outer (inner *deep value))	(outer (inner * 0))	5
