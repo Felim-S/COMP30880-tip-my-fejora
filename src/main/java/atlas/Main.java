@@ -17,9 +17,12 @@ public class Main {
         int beta = Integer.parseInt(config.getProperty("beta", "3"));
         int limit = Integer.parseInt(config.getProperty("results.limit", "10"));
 
-        KnowledgeBase kb = new KnowledgeBase(new StructureRewriter(RuleParser.parse(rulesFile)));
-        kb.loadStructure(filename);
 
+        System.out.println("Loading rules from " + rulesFile);
+        KnowledgeBase kb = new KnowledgeBase(new StructureRewriter(RuleParser.parse(rulesFile)));
+
+        System.out.println("Loading structures from " + filename);
+        kb.loadStructure(filename);
         System.out.println("Loaded structures across " + kb.getTopics().size() + " topics.\n");
 
         List<Structure> structures = kb.getStructuresForTopic(target);
