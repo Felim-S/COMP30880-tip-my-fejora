@@ -1,8 +1,6 @@
 package atlas;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class AnalogyRetriever {
 
@@ -43,18 +41,23 @@ public class AnalogyRetriever {
         List<Structure> targetStructures = kb.getStructuresForTopic(target);
 
         //for each structure find target structures with same hash
+        Map<String, List<Structure>> sourceByHash = new HashMap<>();
         for(Structure sourceStructure : sourceStructures) {
             String sourceHash = StructureAbstractor.generateAbstraction(sourceStructure).toString().intern();
+            sourceByHash.computeIfAbsent(sourceHash, k -> new ArrayList<>()).add(sourceStructure);
+        }
 
-            for(Structure targetStructure : targetStructures) {
-                String targetHash = StructureAbstractor.generateAbstraction(targetStructure).toString().intern();
-
-                //if they share the same abstract shape then they are alignable
-                if(sourceHash.equals(targetHash)) {
-                    alignable.add(new Structure[]{sourceStructure, targetStructure});
+        for(Structure targetStructure : targetStructures) {
+            String targetHash = StructureAbstractor.generateAbstraction(targetStructure).toString().intern();
+            //if they share the same abstract shape then they are alignable
+            List<Structure> matches = sourceByHash.get(targetHash);
+            if (matches != null) {
+                for (Structure s : matches) {
+                    alignable.add(new Structure[]{s, targetStructure});
                 }
             }
         }
+
         return alignable;
     }
 
