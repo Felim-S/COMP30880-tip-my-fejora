@@ -44,13 +44,26 @@ public class CompositeMapper {
             String key = entry.getKey();
             String value = entry.getValue();
 
+            // key must not appear as another value's source key
             if(composite.containsKey(key) && !composite.get(key).equals(value)){
                 return false;
             }
 
+            // value must not appear as another key's value
             if(composite.containsValue(value) && !composite.containsKey(key)){
                 return false;
             }
+
+            // key must not appear as a target value
+            if (composite.containsValue(key) && !composite.containsKey(key)) {
+                return false;
+            }
+
+            // value must not appear as a source key
+            if (composite.containsKey(value) && !composite.get(value).equals(value)) {
+                return false;
+            }
+
         }
 
         return true;
