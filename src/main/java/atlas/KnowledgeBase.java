@@ -34,15 +34,19 @@ public class KnowledgeBase {
                 line = line.trim();
                 if (line.isEmpty()) continue;
 
-                try {
-                    Structure structure = StructureParser.parse(line);
-                    List<Structure> variants = rewriter.rewrite(structure);
-                    for (Structure variant : variants) {
-                        addStructure(variant);
-                    }
+                // Format: TOPIC | structure | abstraction | hash | structure | abstraction | hash | ...
+                // Column 0 is the topic name; concrete structures are at indices 1, 4, 7, ...
+                String[] columns = line.split("\t");
+                for (int i = 1; i < columns.length; i += 3) {
+                    String structureString = columns[i].trim();
+                    if (structureString.isEmpty()) continue;
 
-                } catch (Exception e) {
-                    logger.warning("Failed to parse structure at line " + line + ": " + e.getMessage());
+                    try {
+                        Structure structure = StructureParser.parse(structureString);
+                        addStructure(structure);
+                    } catch (Exception e) {
+                        logger.warning("Failed to parse structure: " + structureString + ": " + e.getMessage());
+                    }
                 }
             }
         }
@@ -56,18 +60,10 @@ public class KnowledgeBase {
      */
 
     public void addStructure(Structure structure) {
-
-        // index by topic
         indexByTopic(structure, structure);
 
-        // index by hash
-        String hash = StructureAbstractor
-                .generateAbstraction(structure)
-                .toString()
-                .intern();
-
-        List<Structure> hashList = hashIndex.computeIfAbsent(hash, k -> new ArrayList<>());
-        if(!hashList.contains(structure)) hashList.add(structure);
+        String hash = StructureAbstractor.generateAbstraction(structure).toString().intern();
+        hashIndex.computeIfAbsent(hash, k -> new ArrayList<>()).add(structure);
     }
 
     // recursive method for indexing structures by topic
@@ -81,7 +77,7 @@ public class KnowledgeBase {
                     String topicName = value.substring(1).intern();
 
                     List<Structure> topicList = topicIndex.computeIfAbsent(topicName, k -> new ArrayList<>());
-                    if (!topicList.contains(root)) topicList.add(root);
+                    topicList.add(root);
                 }
 
             } else if (element instanceof Structure s) {

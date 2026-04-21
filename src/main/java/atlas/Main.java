@@ -1,35 +1,45 @@
 package atlas;
 
-import java.util.List;
+import java.io.*;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 public class Main {
-    public static void main(String[] args) {
-//        if (args.length < 2) {
-//            System.err.println("Usage: atlas <rules-file> <structure>");
-//            System.exit(1);
-//        }
-//
-//        String rulesFile = args[0];
-//        String input = args[1];
-//
-//        Map<String, List<Rule>> rules = RuleParser.parse(rulesFile);
-//        Structure structure = StructureParser.parse(input);
-//        StructureRewriter rewriter = new StructureRewriter(rules);
-//
-//        List<Structure> results = rewriter.rewrite(structure);
-//
-//        System.out.println("Original:");
-//        System.out.println(structure);
-//        System.out.println("\nRewrites (" + (results.size() - 1) + "):");
-//        for (int i = 1; i < results.size(); i++) {
-//            System.out.println(results.get(i));
-//        }
-        Structure structure = StructureParser.parse("(by working (perform scientist (some work (for lab (that (conduct experiment))))))");
-        structure = StructureParser.parse("(work_in scientist (some laboratory (that (conduct experiment))))");
-        System.out.println("Structure: " + structure);
-        double richness = AnalogyRanker.richness(structure);
-        System.out.println("Richness: " + richness);
+    public static void main(String[] args) throws Exception {
+        Properties config = new Properties();
+        try (InputStream in = new FileInputStream("config.properties")) {
+            config.load(in);
+        }
 
+        String filename = config.getProperty("kb.file", "structured domains.txt");
+        String rulesFile = config.getProperty("rules.file", "rewrite rules.txt");
+        String source = args.length >= 2 ? args[0] : config.getProperty("source", "priest");
+        String target = args.length >= 2 ? args[1] : config.getProperty("target", "scientist");
+        // int beta = Integer.parseInt(config.getProperty("beta", "3"));
+        // int limit = Integer.parseInt(config.getProperty("results.limit", "10"));
+
+        System.out.println("Loading rules from " + rulesFile);
+        KnowledgeBase kb = new KnowledgeBase(new StructureRewriter(RuleParser.parse(rulesFile)));
+
+        System.out.println("Loading structures from " + filename);
+        kb.loadStructure(filename);
+        System.out.println("Loaded structures across " + kb.getTopics().size() + " topics.\n");
+
+        HashMap<String, String> mapping = CompositeMapper.generateCompositeMapping(source, target, kb);
+
+        System.out.printf("Generated composite mapping from: %s -> %s\n", source, target);
+        System.out.println("-----------------------------------------------------");
+        int total = 0;
+        for (Map.Entry<String, String> entry : mapping.entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue();
+            if(!(key.equals(value))){
+                System.out.printf("%s \t\t -> \t\t %s \n", key, value);
+                total++;
+            }
+        }
+        System.out.println("-----------------------------------------------------");
+        System.out.printf("Total unique mappings from source to target: %d", total);
     }
 }

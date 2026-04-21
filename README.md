@@ -4,7 +4,7 @@ COMP30880 group project — team "Tip My Fejora"
 
 ## Prerequisites
 - Java 25
-- `rewrite rules.txt` in the project root
+- `structured domains.txt` and`rewrite rules.txt` in the project root
 
 ## Build
 ````
@@ -13,17 +13,15 @@ mvn package
 
 ## Run
 ````
-java -jar target/COMP30880-tip-my-fejora-1.0-SNAPSHOT.jar "rewrite rules.txt" "(exercise *athlete muscle)"
+java -Xmx8g -jar target/COMP30880-tip-my-fejora-1.0-SNAPSHOT.jar [target]
 ````
+> `-Xmx8g` is required — the knowledge base file is ~430MB and exceeds the default JVM heap.
 
-## Output
-````
-Original:
-(exercise *athlete muscle)
+`target` overrides the topic in `config.properties` (default: `apple`).
 
-Rewrites (1):
-(by exercising (perform *athlete exercise (of muscle)))
-````
+## Configuration
+Edit `config.properties` to change the knowledge base file, rules file, target topic, beta parameter, or results limit
+without recompiling.
 
 ## Logging
-Malformed rules are logged to `atlas.log` in the project root.
+Warnings (e.g. malformed structures) are logged via `java.util.logging`.

@@ -9,11 +9,9 @@ public class AnalogyRanker {
 
     private static final int DEFAULT_BETA = 3;
 
-    private KnowledgeBase kb;
-    private AnalogyRetriever retriever;
+    private final AnalogyRetriever retriever;
 
-    public AnalogyRanker(KnowledgeBase kb, AnalogyRetriever retriever) {
-        this.kb = kb;
+    public AnalogyRanker(AnalogyRetriever retriever) {
         this.retriever = retriever;
     }
 
@@ -22,7 +20,7 @@ public class AnalogyRanker {
 
         double sum = 0.0;
 
-        for(int i = 0; i < count.size(); i++){
+        for (int i = 0; i < count.size(); i++) {
             sum += (count.get(i)) * pow(10, i);
         }
 
@@ -72,10 +70,16 @@ public class AnalogyRanker {
     public List<String> rankSources(String target, int beta) {
         Set<String> candidateSources = retriever.getCandidateSources(target);
 
+        // Compute quality only once per candidate
+        Map<String, Double> scores = new HashMap<>();
+        for (String source : candidateSources) {
+            scores.put(source, quality(source, target, beta));
+        }
+
         return candidateSources.stream()
                 .sorted((a,b) -> Double.compare(
-                        quality(b, target, beta),
-                        quality(a, target, beta)
+                        scores.get(b),
+                        scores.get(a)
                 ))
                 .collect(Collectors.toList());
     }
