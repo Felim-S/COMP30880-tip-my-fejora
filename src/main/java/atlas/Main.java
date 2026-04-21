@@ -1,7 +1,8 @@
 package atlas;
 
 import java.io.*;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 public class Main {
@@ -13,10 +14,10 @@ public class Main {
 
         String filename = config.getProperty("kb.file", "structured domains.txt");
         String rulesFile = config.getProperty("rules.file", "rewrite rules.txt");
-        String target = args.length > 0 ? args[0] : config.getProperty("target", "Valhalla");
-        int beta = Integer.parseInt(config.getProperty("beta", "3"));
-        int limit = Integer.parseInt(config.getProperty("results.limit", "10"));
-
+        String source = args.length >= 2 ? args[0] : config.getProperty("source", "priest");
+        String target = args.length >= 2 ? args[1] : config.getProperty("target", "scientist");
+        // int beta = Integer.parseInt(config.getProperty("beta", "3"));
+        // int limit = Integer.parseInt(config.getProperty("results.limit", "10"));
 
         System.out.println("Loading rules from " + rulesFile);
         KnowledgeBase kb = new KnowledgeBase(new StructureRewriter(RuleParser.parse(rulesFile)));
@@ -25,17 +26,20 @@ public class Main {
         kb.loadStructure(filename);
         System.out.println("Loaded structures across " + kb.getTopics().size() + " topics.\n");
 
-        List<Structure> structures = kb.getStructuresForTopic(target);
-        System.out.println("Structures about '" + target + "': " + structures.size());
-        structures.forEach(s -> System.out.println("  " + s));
+        HashMap<String, String> mapping = CompositeMapper.generateCompositeMapping(source, target, kb);
 
-        AnalogyRetriever retriever = new AnalogyRetriever(kb);
-        AnalogyRanker ranker = new AnalogyRanker(retriever);
-
-        List<String> ranked = ranker.rankSources(target, beta);
-        System.out.println("\nRanked analogies for '" + target + "' (" + ranked.size() + " total):");
-        ranked.stream().limit(limit).forEach(source ->
-                System.out.printf("  %-20s quality = %.4f%n", source, ranker.quality(source, target, beta))
-        );
+        System.out.printf("Generated composite mapping from: %s -> %s\n", source, target);
+        System.out.println("-----------------------------------------------------");
+        int total = 0;
+        for (Map.Entry<String, String> entry : mapping.entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue();
+            if(!(key.equals(value))){
+                System.out.printf("%s \t\t -> \t\t %s \n", key, value);
+                total++;
+            }
+        }
+        System.out.println("-----------------------------------------------------");
+        System.out.printf("Total unique mappings from source to target: %d", total);
     }
 }
