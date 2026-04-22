@@ -107,4 +107,36 @@ public class CompositeMapperTest {
             assertEquals(entry.getKey(), entry.getValue());
         }
     }
+
+    @Test
+    public void testMappingCrossKeys(){
+        String source = "crossA";
+        String target = "crossB";
+
+        HashMap<String, String> mapping = CompositeMapper.generateCompositeMapping(source, target, kb);
+
+        assertEquals(2, mapping.size());
+        assertEquals("*crossB", mapping.get("*crossA"));
+        // it correctly takes the first mapping studio -> medium
+        assertEquals("medium", mapping.get("studio"));
+        // and rejects (doesn't merge) the mapping orchestra -> studio
+        // since it violates the 1-1 mapping
+        assertNull(mapping.get("orchestra"));
+    }
+
+    @Test
+    public void testMappingCrossValues(){
+        String source = "crossC";
+        String target = "crossD";
+
+        HashMap<String, String> mapping = CompositeMapper.generateCompositeMapping(source, target, kb);
+
+        assertEquals(2, mapping.size());
+        assertEquals("*crossD", mapping.get("*crossC"));
+        // it correctly takes the first mapping medium -> studio
+        assertEquals("studio", mapping.get("medium"));
+        // and rejects (doesn't merge) the mapping studio -> orchestra
+        // since it violates the 1-1 mapping
+        assertNull(mapping.get("studio"));
+    }
 }
