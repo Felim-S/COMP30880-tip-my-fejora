@@ -16,8 +16,6 @@ public class Main {
         String rulesFile = config.getProperty("rules.file", "rewrite rules.txt");
         String source = args.length >= 2 ? args[0] : config.getProperty("source", "priest");
         String target = args.length >= 2 ? args[1] : config.getProperty("target", "scientist");
-        // int beta = Integer.parseInt(config.getProperty("beta", "3"));
-        // int limit = Integer.parseInt(config.getProperty("results.limit", "10"));
 
         System.out.println("Loading rules from " + rulesFile);
         KnowledgeBase kb = new KnowledgeBase(new StructureRewriter(RuleParser.parse(rulesFile)));
