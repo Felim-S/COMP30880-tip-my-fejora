@@ -7,8 +7,8 @@ import java.util.Map;
 public class StructureMapper {
 
     public static Boolean isMappable(Structure A, Structure B){
-        String a = StructureAbstractor.generateAbstraction(A).toString();
-        String b = StructureAbstractor.generateAbstraction(B).toString();
+        String a = StructureAbstractor.getAbstractionHash(A);
+        String b = StructureAbstractor.getAbstractionHash(B);
         return a.equals(b);
     }
 

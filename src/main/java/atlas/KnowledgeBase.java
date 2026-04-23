@@ -62,7 +62,7 @@ public class KnowledgeBase {
     public void addStructure(Structure structure) {
         indexByTopic(structure, structure);
 
-        String hash = StructureAbstractor.generateAbstraction(structure).toString().intern();
+        String hash = StructureAbstractor.getAbstractionHash(structure).intern();
         hashIndex.computeIfAbsent(hash, k -> new ArrayList<>()).add(structure);
     }
 

@@ -33,10 +33,13 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.1.0</version>
                 <configuration>
-                    <mainClass>atlas.Main</mainClass>
-                    <jvmArgs>
-                        <jvmArg>-Xmx2g</jvmArg>
-                    </jvmArgs>
+                    <executable>java</executable>
+                    <arguments>
+                        <argument>-Xmx8g</argument>
+                        <argument>-classpath</argument>
+                        <classpath/>
+                        <argument>atlas.Main</argument>
+                    </arguments>
                 </configuration>
             </plugin>
         </plugins>
