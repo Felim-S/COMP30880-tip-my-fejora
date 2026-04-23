@@ -1,8 +1,6 @@
 package atlas;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class CompositeMapper {
 
@@ -21,13 +19,15 @@ public class CompositeMapper {
         );
 
         HashMap<String, String> composite = new HashMap<>();
+        HashSet<String> compositeValues = new HashSet<>();
 
         for (Structure[] pair : alignable) {
             try{
                 Map<String, String> partial = StructureMapper.generateMapping(pair[0], pair[1]);
-                if(isConsistent(composite, partial)){
+                if(isConsistent(composite, partial, compositeValues)){
                     // merge the two since they are consistent
                     composite.putAll(partial);
+                    compositeValues.addAll(partial.values());
                 }
             } catch (Exception _){
                 // ignore those for which 1-1 mapping is not possible
@@ -39,7 +39,7 @@ public class CompositeMapper {
 
     // Determines whether a consistent 1-1 mapping is possible
     // between two composite mappings (A, B)
-    private static boolean isConsistent(Map<String, String> composite, Map<String, String> partial){
+    private static boolean isConsistent(Map<String, String> composite, Map<String, String> partial, Set<String> compositeValues){
         for(Map.Entry<String, String> entry : partial.entrySet()){
             String key = entry.getKey();
             String value = entry.getValue();
@@ -50,12 +50,12 @@ public class CompositeMapper {
             }
 
             // value must not appear as another key's value
-            if(composite.containsValue(value) && !composite.containsKey(key)){
+            if(compositeValues.contains(value) && !composite.containsKey(key)){
                 return false;
             }
 
             // key must not appear as a target value
-            if (composite.containsValue(key) && !composite.containsKey(key)) {
+            if(compositeValues.contains(key)   && !composite.containsKey(key)){
                 return false;
             }
 

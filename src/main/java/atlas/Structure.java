@@ -7,6 +7,11 @@ public class Structure extends Element {
 
     private final List<Element> elements = new ArrayList<>();
 
+    private String abstractionHash = null;
+
+    public String getCachedAbstractionHash() { return abstractionHash; }
+    public void setCachedAbstractionHash(String hash) { this.abstractionHash = hash; }
+
     @Override
     public boolean isStructure() {
         return true;

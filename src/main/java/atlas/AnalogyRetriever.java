@@ -18,7 +18,7 @@ public class AnalogyRetriever {
 
         //for each structure about target, generate its abstract hash
         for (Structure targetStructure : targetStructures) {
-            String hash = StructureAbstractor.generateAbstraction(targetStructure).toString().intern();
+            String hash = StructureAbstractor.getAbstractionHash(targetStructure).intern();
 
             //
             List<Structure> analogousStructures = kb.getStructuresByHash(hash);
@@ -43,12 +43,12 @@ public class AnalogyRetriever {
         //for each structure find target structures with same hash
         Map<String, List<Structure>> sourceByHash = new HashMap<>();
         for(Structure sourceStructure : sourceStructures) {
-            String sourceHash = StructureAbstractor.generateAbstraction(sourceStructure).toString().intern();
+            String sourceHash = StructureAbstractor.getAbstractionHash(sourceStructure).intern();
             sourceByHash.computeIfAbsent(sourceHash, k -> new ArrayList<>()).add(sourceStructure);
         }
 
         for(Structure targetStructure : targetStructures) {
-            String targetHash = StructureAbstractor.generateAbstraction(targetStructure).toString().intern();
+            String targetHash = StructureAbstractor.getAbstractionHash(targetStructure).intern();
             //if they share the same abstract shape then they are alignable
             List<Structure> matches = sourceByHash.get(targetHash);
             if (matches != null) {

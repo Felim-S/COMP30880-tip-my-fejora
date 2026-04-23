@@ -16,17 +16,17 @@ public class Main {
         String rulesFile = config.getProperty("rules.file", "rewrite rules.txt");
         String source = args.length >= 2 ? args[0] : config.getProperty("source", "priest");
         String target = args.length >= 2 ? args[1] : config.getProperty("target", "scientist");
-        // int beta = Integer.parseInt(config.getProperty("beta", "3"));
-        // int limit = Integer.parseInt(config.getProperty("results.limit", "10"));
 
-        System.out.println("Loading rules from " + rulesFile);
         KnowledgeBase kb = new KnowledgeBase(new StructureRewriter(RuleParser.parse(rulesFile)));
 
         System.out.println("Loading structures from " + filename);
+        long loadStart = System.currentTimeMillis();
         kb.loadStructure(filename);
-        System.out.println("Loaded structures across " + kb.getTopics().size() + " topics.\n");
+        System.out.println("Loaded in " + (System.currentTimeMillis() - loadStart) + "ms across " + kb.getTopics().size() + " topics.\n");
 
+        long queryStart = System.currentTimeMillis();
         HashMap<String, String> mapping = CompositeMapper.generateCompositeMapping(source, target, kb);
+        System.out.println("Mapping generated in " + (System.currentTimeMillis() - queryStart) + "ms");
 
         System.out.printf("Generated composite mapping from: %s -> %s\n", source, target);
         System.out.println("-----------------------------------------------------");
