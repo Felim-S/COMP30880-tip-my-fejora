@@ -1,0 +1,12 @@
+alpha	(by working (perform *alpha (some work (for laboratory (that (conduct experiment))))))	_	_	(by seeking (seek *alpha advance (as outcome)))	_	_	(create *alpha product)	_	_
+beta	(by serving (perform *beta (some service (for congregation (that (conduct worship))))))	_	_	(by seeking (seek *beta proselyte (as supporter)))	_	_	(create *beta offering)	_	_
+gamma	(by leading (perform *gamma (some work (for laboratory (that (conduct experiment))))))	_	_
+delta	(by leading (perform *delta (some service (for congregation (that (conduct worship))))))	_	_
+epsilon	(run *epsilon race)	_	_
+zeta	(fly *zeta kite)	_	_
+conflict1	(by working (perform *conflict1 (some work (for laboratory (that (conduct experiment))))))	_	_	(help *conflict1 laboratory)	_	_
+conflict2	(by serving (perform *conflict2 (some service (for congregation (that (conduct worship))))))	_	_	(help *conflict2 studio)	_	_
+crossA	(work_in *crossA studio)	_	_	(perform *crossA orchestra)	_	_
+crossB	(work_in *crossB medium)	_	_	(perform *crossB studio)	_	_
+crossC	(work_in *crossC medium)	_	_	(perform *crossC studio)	_	_
+crossD	(work_in *crossD studio)	_	_	(perform *crossD orchestra)	_	_

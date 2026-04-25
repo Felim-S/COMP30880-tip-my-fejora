@@ -63,7 +63,6 @@ public class StructureRewriter {
         List<Element> elements = structure.getElements();
 
         if (elements.size() < 3){
-            logger.warning("Cannot apply rule: [" + rule.toString() + "] structure has less than 3 elements");
             return structure;
         }
 

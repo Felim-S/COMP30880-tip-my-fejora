@@ -4,6 +4,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class StructureAbstractor {
+
+    public static String getAbstractionHash(Structure structure) {
+        if(structure.getCachedAbstractionHash() == null) {
+            structure.setCachedAbstractionHash(generateAbstraction(structure).toString());
+        }
+        return structure.getCachedAbstractionHash();
+    }
+
     public static Structure generateAbstraction(Structure structure) {
         Map<String, Integer> map = new HashMap<>();
         int[] counter = {0};

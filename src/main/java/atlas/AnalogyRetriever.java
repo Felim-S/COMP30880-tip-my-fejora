@@ -1,12 +1,10 @@
 package atlas;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class AnalogyRetriever {
 
-    private KnowledgeBase kb;
+    private final KnowledgeBase kb;
 
     public AnalogyRetriever(KnowledgeBase kb) {
         this.kb = kb;
@@ -20,7 +18,7 @@ public class AnalogyRetriever {
 
         //for each structure about target, generate its abstract hash
         for (Structure targetStructure : targetStructures) {
-            String hash = StructureAbstractor.generateAbstraction(targetStructure).toString().intern();
+            String hash = StructureAbstractor.getAbstractionHash(targetStructure).intern();
 
             //
             List<Structure> analogousStructures = kb.getStructuresByHash(hash);
@@ -43,18 +41,23 @@ public class AnalogyRetriever {
         List<Structure> targetStructures = kb.getStructuresForTopic(target);
 
         //for each structure find target structures with same hash
+        Map<String, List<Structure>> sourceByHash = new HashMap<>();
         for(Structure sourceStructure : sourceStructures) {
-            String sourceHash = StructureAbstractor.generateAbstraction(sourceStructure).toString().intern();
+            String sourceHash = StructureAbstractor.getAbstractionHash(sourceStructure).intern();
+            sourceByHash.computeIfAbsent(sourceHash, k -> new ArrayList<>()).add(sourceStructure);
+        }
 
-            for(Structure targetStructure : targetStructures) {
-                String targetHash = StructureAbstractor.generateAbstraction(targetStructure).toString().intern();
-
-                //if they share the same abstract shape then they are alignable
-                if(sourceHash.equals(targetHash)) {
-                    alignable.add(new Structure[]{sourceStructure, targetStructure});
+        for(Structure targetStructure : targetStructures) {
+            String targetHash = StructureAbstractor.getAbstractionHash(targetStructure).intern();
+            //if they share the same abstract shape then they are alignable
+            List<Structure> matches = sourceByHash.get(targetHash);
+            if (matches != null) {
+                for (Structure s : matches) {
+                    alignable.add(new Structure[]{s, targetStructure});
                 }
             }
         }
+
         return alignable;
     }
 

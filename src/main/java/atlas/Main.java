@@ -1,34 +1,45 @@
 package atlas;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        String filename = "structured domains.txt";
-        String target = args.length > 0 ? args[0] : "AIDS";
+        Properties config = new Properties();
+        try (InputStream in = new FileInputStream("config.properties")) {
+            config.load(in);
+        }
 
-        KnowledgeBase kb = new KnowledgeBase(new StructureRewriter(new HashMap<>()));
+        String filename = config.getProperty("kb.file", "structured domains.txt");
+        String rulesFile = config.getProperty("rules.file", "rewrite rules.txt");
+        String source = args.length >= 2 ? args[0] : config.getProperty("source", "priest");
+        String target = args.length >= 2 ? args[1] : config.getProperty("target", "scientist");
+
+        KnowledgeBase kb = new KnowledgeBase(new StructureRewriter(RuleParser.parse(rulesFile)));
+
+        System.out.println("Loading structures from " + filename);
+        long loadStart = System.currentTimeMillis();
         kb.loadStructure(filename);
+        System.out.println("Loaded in " + (System.currentTimeMillis() - loadStart) + "ms across " + kb.getTopics().size() + " topics.\n");
 
-        System.out.println("Loaded structures across " + kb.getTopics().size() + " topics.\n");
+        long queryStart = System.currentTimeMillis();
+        HashMap<String, String> mapping = CompositeMapper.generateCompositeMapping(source, target, kb);
+        System.out.println("Mapping generated in " + (System.currentTimeMillis() - queryStart) + "ms");
 
-        List<Structure> structures = kb.getStructuresForTopic(target);
-        System.out.println("Structures about '" + target + "': " + structures.size());
-        structures.stream().limit(3).forEach(s -> System.out.println("  " + s));
-
-        AnalogyRetriever retriever = new AnalogyRetriever(kb);
-        AnalogyRanker ranker = new AnalogyRanker(retriever);
-
-        List<String> ranked = ranker.rankSources(target);
-        System.out.println("\nRanked analogies for '" + target + "' (" + ranked.size() + " total):");
-        ranked.stream().limit(10).forEach(source ->
-                System.out.printf("  %-20s quality = %.4f%n", source, ranker.quality(source, target))
-        );
+        System.out.printf("Generated composite mapping from: %s -> %s\n", source, target);
+        System.out.println("-----------------------------------------------------");
+        int total = 0;
+        for (Map.Entry<String, String> entry : mapping.entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue();
+            if(!(key.equals(value))){
+                System.out.printf("%s \t\t -> \t\t %s \n", key, value);
+                total++;
+            }
+        }
+        System.out.println("-----------------------------------------------------");
+        System.out.printf("Total unique mappings from source to target: %d", total);
     }
 }
