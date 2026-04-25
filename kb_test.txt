@@ -1,0 +1,5 @@
+(eat *food apple)
+(give *food *drink book)
+(help *Adam Eve)
+(perform *priest worship)
+(outer (inner *deep value))

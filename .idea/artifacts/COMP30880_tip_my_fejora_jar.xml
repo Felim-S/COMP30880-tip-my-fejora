@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="COMP30880-tip-my-fejora:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/COMP30880_tip_my_fejora_jar</output-path>
+    <root id="archive" name="COMP30880-tip-my-fejora.jar">
+      <element id="module-output" name="COMP30880-tip-my-fejora" />
+    </root>
+  </artifact>
+</component>
