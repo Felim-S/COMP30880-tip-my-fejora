@@ -1,9 +1,7 @@
 package atlas;
 
 import java.io.*;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 public class Main {
     public static void main(String[] args) throws Exception {
@@ -16,30 +14,36 @@ public class Main {
         String rulesFile = config.getProperty("rules.file", "rewrite rules.txt");
         String source = args.length >= 2 ? args[0] : config.getProperty("source", "priest");
         String target = args.length >= 2 ? args[1] : config.getProperty("target", "scientist");
+        int topN = Integer.parseInt(config.getProperty("top.n", "5"));
 
         KnowledgeBase kb = new KnowledgeBase(new StructureRewriter(RuleParser.parse(rulesFile)));
-
-        System.out.println("Loading structures from " + filename);
-        long loadStart = System.currentTimeMillis();
         kb.loadStructure(filename);
-        System.out.println("Loaded in " + (System.currentTimeMillis() - loadStart) + "ms across " + kb.getTopics().size() + " topics.\n");
+        System.out.println("Loaded " + kb.getTopics().size() + " topics from " + filename + "\n");
 
-        long queryStart = System.currentTimeMillis();
+        // 5.1: Composite Mapping
         HashMap<String, String> mapping = CompositeMapper.generateCompositeMapping(source, target, kb);
-        System.out.println("Mapping generated in " + (System.currentTimeMillis() - queryStart) + "ms");
+        System.out.printf("=== 5.1: Composite Mapping (%s -> %s) ===\n", source, target);
+        mapping.forEach((k, v) -> { if (!k.equals(v)) System.out.printf("  %s -> %s\n", k, v); });
+        System.out.printf("Richness: %d\n\n", CompositeRanker.mappingRichness(mapping));
 
-        System.out.printf("Generated composite mapping from: %s -> %s\n", source, target);
-        System.out.println("-----------------------------------------------------");
-        int total = 0;
-        for (Map.Entry<String, String> entry : mapping.entrySet()) {
-            String key = entry.getKey();
-            String value = entry.getValue();
-            if(!(key.equals(value))){
-                System.out.printf("%s \t\t -> \t\t %s \n", key, value);
-                total++;
-            }
+        // 5.2: Ranked Sources
+        CompositeRanker ranker = new CompositeRanker(kb);
+        List<String> ranked = ranker.rankSources(target);
+        System.out.printf("=== 5.2: Ranked Sources for \"%s\" ===\n", target);
+        for (int i = 0; i < Math.min(topN, ranked.size()); i++) {
+            String src = ranked.get(i);
+            int richness = CompositeRanker.mappingRichness(CompositeMapper.generateCompositeMapping(src, target, kb));
+            System.out.printf("  %d. %-20s (richness: %d)\n", i + 1, src, richness);
         }
-        System.out.println("-----------------------------------------------------");
-        System.out.printf("Total unique mappings from source to target: %d", total);
+
+        // 5.3: Top-N Retrieval
+        CompositeRetriever retriever = new CompositeRetriever(kb);
+        Map<String, HashMap<String, String>> top = retriever.getTopCompositeAnalogies(target, topN);
+        System.out.printf("\n=== 5.3: Top %d Composite Analogies for \"%s\" ===\n", topN, target);
+        int rank = 1;
+        for (Map.Entry<String, HashMap<String, String>> e : top.entrySet()) {
+            System.out.printf("  %d. %s (richness: %d)\n", rank++, e.getKey(), CompositeRanker.mappingRichness(e.getValue()));
+            e.getValue().forEach((k, v) -> { if (!k.equals(v)) System.out.printf("       %s -> %s\n", k, v); });
+        }
     }
 }

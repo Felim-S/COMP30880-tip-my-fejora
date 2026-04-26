@@ -21,7 +21,7 @@ public class CompositeRanker {
                 count++;
             }
         }
-        return count++;
+        return count;
     }
 
 
