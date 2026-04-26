@@ -26,7 +26,7 @@ public class CompositeRanker {
 
 
 
-        public List<String> rankSource(String target){
+        public List<String> rankSources(String target){
             Set<String> candidates = retriever.getCandidateSources(target);
 
             Map<String, Integer> richnessBySource = new HashMap<>();
