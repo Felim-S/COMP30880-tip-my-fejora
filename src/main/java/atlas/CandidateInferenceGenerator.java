@@ -1,8 +1,6 @@
 package atlas;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class CandidateInferenceGenerator {
 
@@ -12,10 +10,14 @@ public class CandidateInferenceGenerator {
         this.kb = kb;
     }
 
-    public List<Structure> generateCandidateInference(Map<String, String> compositeMapping,
-                                                      List<Structure> mappedSourceStructures, String S){
+    public List<Structure> generateCandidateInference(Map<String, String> compositeMapping, String S, String T){
         List<Structure> sourceStructures = kb.getStructuresForTopic(S);
+        List<Structure> targetStructures = kb.getStructuresForTopic(T);
+
         List<Structure> inferences = new ArrayList<>();
+        Set<String> seenStructures = new HashSet<>();
+
+        List<Structure> mappedSourceStructures = getMappedSourceStructures(compositeMapping, sourceStructures, targetStructures);
 
         for(Structure s : sourceStructures){
             if (mappedSourceStructures.contains(s)){
@@ -26,11 +28,31 @@ public class CandidateInferenceGenerator {
 
             if (allCovered(arguments, compositeMapping)) {
                 Structure translated = translate(s, compositeMapping);
-                inferences.add(translated);
+                if(seenStructures.add(translated.toString())){
+                    inferences.add(translated);
+                }
             }
         }
 
         return inferences;
+    }
+
+    private List<Structure> getMappedSourceStructures(Map<String, String> compositeMapping,
+                                                      List<Structure> sourceStructures,
+                                                      List<Structure> targetStructures){
+        Set<String> targetHashes = new HashSet<>();
+        for (Structure s : targetStructures) {
+            targetHashes.add(StructureAbstractor.getAbstractionHash(s));
+        }
+
+        List<Structure> mappedSourceStructures = new ArrayList<>();
+        for(Structure s : sourceStructures){
+            if(targetHashes.contains(StructureAbstractor.getAbstractionHash(s))){
+                mappedSourceStructures.add(s);
+            }
+        }
+
+        return mappedSourceStructures;
     }
 
     private List<Symbol> extractNonPredicateSymbols(Structure s) {
