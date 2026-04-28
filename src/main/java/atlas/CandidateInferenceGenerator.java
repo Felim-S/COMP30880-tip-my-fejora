@@ -17,7 +17,7 @@ public class CandidateInferenceGenerator {
         List<Structure> inferences = new ArrayList<>();
         Set<String> seenStructures = new HashSet<>();
 
-        List<Structure> mappedSourceStructures = getMappedSourceStructures(compositeMapping, sourceStructures, targetStructures);
+        Set<Structure> mappedSourceStructures = getMappedSourceStructures(sourceStructures, targetStructures);
 
         for(Structure s : sourceStructures){
             if (mappedSourceStructures.contains(s)){
@@ -37,15 +37,14 @@ public class CandidateInferenceGenerator {
         return inferences;
     }
 
-    private List<Structure> getMappedSourceStructures(Map<String, String> compositeMapping,
-                                                      List<Structure> sourceStructures,
+    private Set<Structure> getMappedSourceStructures(List<Structure> sourceStructures,
                                                       List<Structure> targetStructures){
         Set<String> targetHashes = new HashSet<>();
         for (Structure s : targetStructures) {
             targetHashes.add(StructureAbstractor.getAbstractionHash(s));
         }
 
-        List<Structure> mappedSourceStructures = new ArrayList<>();
+        Set<Structure> mappedSourceStructures = new HashSet<>();
         for(Structure s : sourceStructures){
             if(targetHashes.contains(StructureAbstractor.getAbstractionHash(s))){
                 mappedSourceStructures.add(s);
