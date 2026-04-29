@@ -10,3 +10,11 @@ crossA	(work_in *crossA studio)	_	_	(perform *crossA orchestra)	_	_
 crossB	(work_in *crossB medium)	_	_	(perform *crossB studio)	_	_
 crossC	(work_in *crossC medium)	_	_	(perform *crossC studio)	_	_
 crossD	(work_in *crossD studio)	_	_	(perform *crossD orchestra)	_	_
+inferSource	(by working (perform *inferSource (some work (for laboratory (that (conduct experiment))))))	_	_	(enjoy *inferSource laboratory)	_	_
+inferTarget	(by serving (perform *inferTarget (some service (for congregation (that (conduct worship))))))	_	_
+inferEmptySource	(by working (perform *inferEmptySource (some work (for laboratory (that (conduct experiment))))))	_	_	(enjoy *inferEmptySource classroom)	_	_
+inferEmptyTarget	(by serving (perform *inferEmptyTarget (some service (for congregation (that (conduct worship))))))	_	_
+inferMultiSource	(by working (perform *inferMultiSource (some work (for laboratory (that (conduct experiment))))))	_	_	(enjoy *inferMultiSource work)	_	_	(enjoy *inferMultiSource laboratory)	_	_	(enjoy *inferMultiSource experiment)	_	_
+inferMultiTarget	(by serving (perform *inferMultiTarget (some service (for congregation (that (conduct worship))))))	_	_
+inferDupSource	(by working (perform *inferDupSource (some work (for laboratory (that (conduct experiment))))))	_	_	(enjoy *inferDupSource laboratory)	_	_	(enjoy *inferDupSource laboratory)	_	_
+inferDupTarget	(by serving (perform *inferDupTarget (some service (for congregation (that (conduct worship))))))	_	_
