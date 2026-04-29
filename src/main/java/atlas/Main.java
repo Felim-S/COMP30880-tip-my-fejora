@@ -39,7 +39,15 @@ public class Main {
         System.out.println("... Total: " + inferences.size());
 
         // 6.2:
-        // TODO
+        System.out.printf("\n===6.2: Coalesced Inferences (%s -> %s) ===\n", source, target);
+        List<List<Structure>> coalescences = InferenceCoalescer.coalesce(inferences, mapping);
+        System.out.println("Total coalescence groups: " + coalescences.size());
+        for(int i = 0; i < coalescences.size(); i++){
+            System.out.println("\nGroup " + (i + 1) + " (" + coalescences.get(i).size() + " inferences):");
+            for(Structure s : coalescences.get(i)){
+                System.out.println("  " + s);
+            }
+        }
 
         // 6.3:
         // TODO
