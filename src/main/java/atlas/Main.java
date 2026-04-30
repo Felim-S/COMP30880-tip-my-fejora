@@ -44,12 +44,15 @@ public class Main {
         System.out.println("Total coalescence groups: " + coalescences.size());
         for(int i = 0; i < coalescences.size(); i++){
             System.out.println("\nGroup " + (i + 1) + " (" + coalescences.get(i).size() + " inferences):");
-            for(Structure s : coalescences.get(i)){
-                System.out.println("  " + s);
-            }
+            coalescences.get(i).stream().limit(10).forEach((s) -> System.out.println("  " + s));
         }
 
         // 6.3:
         // TODO
+
+        // Extra : Bidirectional Analogy
+        // Takes the source and target and computes composite mappings and candidate
+        // inferences in both directions, source -> target + target -> source
+        BidirectionalAnalogy.generateBidirectionalAnalogy(source, target, kb);
     }
 }
