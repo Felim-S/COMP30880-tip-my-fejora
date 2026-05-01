@@ -48,7 +48,17 @@ public class Main {
         }
 
         // 6.3:
-        // TODO
+        System.out.printf("\n===6.3: Ranked Coalesced Inferences (%s -> %s) ===\n", source, target);
+        AugmentedAnalogyRanker ranker = new AugmentedAnalogyRanker(kb);
+
+        List<Map.Entry<List<Structure>, Double>> rankedGroups = ranker.ranking(source, target, coalescences, mapping);
+        int rank = 1;
+
+        for (var entry : rankedGroups) {
+            System.out.printf("\nRank %d (score %.2f):\n", rank++, entry.getValue());
+
+            entry.getKey().stream().limit(10).forEach(s -> System.out.println("  " + s));
+        }
 
         // Extra : Bidirectional Analogy
         // Takes the source and target and computes composite mappings and candidate
