@@ -30,7 +30,7 @@ public class AugmentedAnalogyRanker {
 
     // main scoring function, combines base alignment, candidate inferences and coherence
     public double augmentedQuality(String source, String target, int beta) {
-        double baseScore = computeBaseScore(source, target);
+        double baseScore = computeBaseScore(source, target, beta);
 
         HashMap<String, String> mapping = CompositeMapper.generateCompositeMapping(source, target, kb);
         List<Structure> inferences = inferenceGenerator.generateCandidateInference(mapping, source, target);
@@ -64,7 +64,7 @@ public class AugmentedAnalogyRanker {
 
         Map<List<Structure>, Double> scoredGroups = new HashMap<>();
 
-        double baseScore = computeBaseScore(source, target);
+        double baseScore = computeBaseScore(source, target, beta);
 
         for (List<Structure> group : groups) {
             double inferenceScore = 0.0;
@@ -98,7 +98,7 @@ public class AugmentedAnalogyRanker {
     }
 
 
-    private double computeBaseScore(String source, String target) {
+    private double computeBaseScore(String source, String target, int beta) {
         double baseScore = 0.0;
         List<Structure[]> alignable = retriever.getAlignableStructures(source, target);
         for (Structure[] structure : alignable) {
